@@ -1,4 +1,6 @@
-![Screenshot del Juego](image.png)
+<p align="center">
+  <img src="image.png" width="400" alt="Logo">
+</p>
 
 # Tic-Tac-Toe en ensamblador 8086
 
