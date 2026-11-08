@@ -1,3 +1,5 @@
+![Screenshot del Juego](image.png)
+
 # Tic-Tac-Toe en ensamblador 8086
 
 Juego de Tic-Tac-Toe (gato) para dos jugadores, en modo texto, escrito en ensamblador 8086 para **Emu8086**.
