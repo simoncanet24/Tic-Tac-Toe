@@ -14,7 +14,7 @@
 ;    - HIGH SCORE: el mayor puntaje alcanzado por cualquier jugador.
 ;
 ;  CONTROLES
-;    1..9 : marcar casilla      P : pausa      ESC : volver al titulo
+;    1..9 : marcar casilla      ESC : volver al titulo
 ; ====================================================================
 
 .model small
@@ -113,13 +113,12 @@ sBlank30     db '                              $'
 sTurnX       db 'Turno: X$'
 sTurnO       db 'Turno: O$'
 sTaken       db 'Casilla ocupada!$'
-sPausa       db '** PAUSA (P) **$'
 sFin         db 'FIN DEL JUEGO$'
 sWinX        db 'Gana el jugador X!$'
 sWinO        db 'Gana el jugador O!$'
 sDraw        db 'Empate!$'
 sOpciones    db 'R = Jugar de nuevo   ESC = Salir$'
-sHelp        db 'Teclas 1-9: marcar   P: pausa   ESC: titulo$'
+sHelp        db 'Teclas 1-9: marcar   ESC: titulo$'
 
 ; --------------------------------------------------------------------
 ;  SEGMENTO DE CODIGO
@@ -132,6 +131,7 @@ sHelp        db 'Teclas 1-9: marcar   P: pausa   ESC: titulo$'
 main proc
     mov ax, @data            ; DS apunta al segmento de datos
     mov ds, ax
+    mov es, ax               ; ES = DS (INT 10h AH=13h lee la cadena en ES:BP)
 
     mov ax, 0003h            ; modo texto 80x25 (tambien limpia)
     int 10h
@@ -202,27 +202,33 @@ PutCh proc
 PutCh endp
 
 ; ====================================================================
-;  DrawStr: dibuja una cadena '$' con color
+;  DrawStr: dibuja una cadena '$' con color usando UNA sola llamada al
+;  BIOS (INT 10h, AH=13h). Es mucho mas rapido que dibujar letra por letra.
 ;  Entrada: SI = direccion de la cadena, DH = fila, DL = columna,
 ;           BL = atributo (color)
+;  Requiere ES = DS (se configura en main).
 ; ====================================================================
 DrawStr proc
     push ax
     push bx
     push cx
-    push dx
+    push bp
     push si
-ds_next:
+    mov bp, si               ; ES:BP = inicio de la cadena
+    xor cx, cx               ; CX = longitud de la cadena
+ds_len:
     cmp byte ptr [si], '$'   ; fin de cadena?
-    je ds_done
-    mov al, [si]             ; caracter actual
-    call PutCh
-    inc si                   ; siguiente caracter
-    inc dl                   ; siguiente columna
-    jmp ds_next
-ds_done:
+    je ds_write
+    inc si
+    inc cx                   ; contar un caracter mas
+    jmp ds_len
+ds_write:
+    mov ah, 13h              ; escribir cadena
+    mov al, 0                ; modo 0: usa el color de BL, no mueve el cursor
+    mov bh, 0                ; pagina 0
+    int 10h                  ; DH = fila, DL = columna, CX = longitud
     pop si
-    pop dx
+    pop bp
     pop cx
     pop bx
     pop ax
@@ -319,7 +325,7 @@ ng_clear:                    ; vaciar las 9 casillas
     mov quitFlag, 0
     mov turn, MARK_X         ; X siempre empieza
     PrintAt 1, 30, 0Bh, sTitle
-    PrintAt 17, 18, 07h, sHelp
+    PrintAt 17, 23, 07h, sHelp
     call DrawGrid
     call DrawHUD
     call DrawBoard
@@ -505,10 +511,6 @@ gm_key:
     int 16h
     cmp al, 27               ; ESC
     je gm_quit
-    cmp al, 'p'
-    je gm_pause
-    cmp al, 'P'
-    je gm_pause
     cmp al, '1'              ; solo valen las teclas 1..9
     jb gm_key
     cmp al, '9'
@@ -518,19 +520,6 @@ gm_key:
     cmp al, 1
     je gm_ok
     PrintAt 14, 28, 0Ch, sTaken   ; casilla ocupada: avisar y esperar otra
-    jmp gm_key
-gm_pause:
-    PrintAt 14, 28, 0Eh, sPausa
-gm_pwait:
-    mov ah, 00h              ; en pausa solo se acepta P
-    int 16h
-    cmp al, 'p'
-    je gm_resume
-    cmp al, 'P'
-    je gm_resume
-    jmp gm_pwait
-gm_resume:
-    call ShowTurn
     jmp gm_key
 gm_quit:
     mov quitFlag, 1
