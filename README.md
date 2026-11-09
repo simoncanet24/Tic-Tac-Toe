@@ -81,3 +81,8 @@ Proyecto 2 de Arquitectura de Computadoras (EIF205), Escuela de Informática, Un
 | `.data` | Tablero, estado, puntajes, combinaciones ganadoras y mensajes. |
 | `Macros` | Operaciones repetitivas para preservar registros, posicionar cursor e imprimir. |
 | `.code` | Procedimientos de inicialización, interfaz, entrada, lógica del juego y puntuación. |
+
+## Autores
+Simon Canet Porras
+Johan Jafeth Zuñiga Rodriguez
+Jeremy Calderon Quesada
