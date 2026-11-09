@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="image.png" width="400" alt="Logo">
+  <img src="imagen yoan 1.png" width="400" alt="Logo">
+<img src="imagen yoan 2.png" width="400" alt="Logo">
+  <img src="imagen yoan 3.png" width="400" alt="Logo">
 </p>
 
 Juego de Tic-Tac-Toe (gato) para dos jugadores, en modo texto, escrito en ensamblador 8086 para **Emu8086**.
