@@ -2,6 +2,11 @@
   <img src="image.png" width="400" alt="Logo">
 </p>
 
+Juego de Tic-Tac-Toe (gato) para dos jugadores, en modo texto, escrito en ensamblador 8086 para **Emu8086**.
+Proyecto 2 de Arquitectura de Computadoras (EIF205), Escuela de Informática, Universidad Nacional.
+
+**Integrantes:** Simon Canet Porras - Johan Jafeth Zuñiga Rodriguez - Jeremy Calderon Quesada
+
 # Tic-Tac-Toe en ensamblador 8086
 
 ## 8.1 Nombre y descripción
